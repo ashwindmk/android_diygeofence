@@ -1,0 +1,22 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.ashwin.android.library.diygeofence">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <application>
+        <receiver android:name="com.ashwin.android.library.diygeofence.LocationUpdateReceiver"
+                  android:exported="true">
+            <intent-filter>
+                <action android:name="com.ashwin.android.library.diygeofence.LOCATION_UPDATES" />
+                <category android:name="${applicationId}" />
+            </intent-filter>
+        </receiver>
+
+        <service
+                android:name="com.ashwin.android.library.diygeofence.LocationUpdateService"
+                android:exported="false">
+        </service>
+    </application>
+
+</manifest>
