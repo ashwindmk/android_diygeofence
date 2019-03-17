@@ -1,43 +1,93 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+//apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
 
 android {
     compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 14
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
-        release {
+        debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
-
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+    compileOnly 'com.android.support:appcompat-v7:28.0.0'
 
     compileOnly ('com.google.android.gms:play-services-location:16.0.0') {
         exclude module: 'support-v4'
     }
 
     // Testing
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    testCompileOnly 'junit:junit:4.12'
+    androidTestCompileOnly 'com.android.support.test:runner:1.0.2'
+    androidTestCompileOnly 'com.android.support.test.espresso:espresso-core:3.0.2'
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
+
 repositories {
     mavenCentral()
+}
+
+Properties properties = new Properties()
+properties.load(project.file('local.properties').newDataInputStream())
+
+def groupid = "com.ashwin.android"
+def artifactid = "diy-geofence"
+version = "0.0.3"
+group = groupid
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+                groupId groupid
+                artifactId artifactid
+                name artifactid
+                developers {
+                    developer {
+                        id 'ashwin-dinesh'
+                        name 'Ashwin Dinesh'
+                        email 'ashwin.dinesh01@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    user = properties.getProperty("user")
+    key = properties.getProperty("key")
+    configurations = ['archives']
+    pkg {
+        repo = 'maven'
+        name = artifactid
+        vcsUrl = 'https://github.com/ashwindmk/android_diygeofence.git'
+        licenses = ['Apache-2.0']
+        publish = true
+        version {
+            name = version
+            vcsTag = version
+        }
+    }
 }
