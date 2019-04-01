@@ -344,7 +344,7 @@ object DiyGeofenceManager {
             }
 
             if (lastEnteredGeofences.contains(exitedGeofence)) {
-                dispatchExitCallback(exitedGeofence)
+                dispatchExitCallback(context, exitedGeofence)
             }
         }
 
@@ -356,7 +356,7 @@ object DiyGeofenceManager {
                 }
 
                 if (!lastEnteredGeofences.contains(enteredGeofence)) {
-                    dispatchEnterCallback(enteredGeofence)
+                    dispatchEnterCallback(context, enteredGeofence)
                 }
             }
         }
@@ -380,18 +380,18 @@ object DiyGeofenceManager {
         return Math.abs(distance)
     }
 
-    private fun dispatchEnterCallback(id: String) {
+    private fun dispatchEnterCallback(context: Context, id: String) {
         if (appDebugBuild) {
             Log.w(DEBUG_TAG, "Entered geofence: $id")
         }
-        listener?.onEnter(id)
+        listener?.onEnter(context, id)
     }
 
-    private fun dispatchExitCallback(id: String) {
+    private fun dispatchExitCallback(context: Context, id: String) {
         if (appDebugBuild) {
             Log.w(DEBUG_TAG, "Exited geofence: $id")
         }
-        listener?.onExit(id)
+        listener?.onExit(context, id)
     }
 
     fun reset(context: Context) {

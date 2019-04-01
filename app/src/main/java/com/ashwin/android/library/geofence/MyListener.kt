@@ -9,7 +9,7 @@ class MyListener : GeofenceListener {
         val VISITED_GEOFENCES = "visited_geofences"
     }
 
-    override fun onEnter(id: String) {
+    override fun onEnter(context: Context, id: String) {
         val sharedPrefs = MainApplication.appContext.getSharedPreferences(MainApplication.PREFS_FILENAME, Context.MODE_PRIVATE)
         val prevGeofences = sharedPrefs.getString(VISITED_GEOFENCES, "")
         val latestGeofences = if (prevGeofences.isNotBlank()) {
@@ -22,7 +22,7 @@ class MyListener : GeofenceListener {
             .apply()
     }
 
-    override fun onExit(id: String) {
+    override fun onExit(context: Context, id: String) {
         val sharedPrefs = MainApplication.appContext.getSharedPreferences(MainApplication.PREFS_FILENAME, Context.MODE_PRIVATE)
         val prevGeofences = sharedPrefs.getString(VISITED_GEOFENCES, "")
         val latestGeofences = if (prevGeofences.isNotBlank()) {
