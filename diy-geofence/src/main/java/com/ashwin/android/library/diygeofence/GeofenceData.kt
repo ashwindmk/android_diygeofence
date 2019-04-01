@@ -1,5 +1,8 @@
 package com.ashwin.android.library.diygeofence
 
+import android.support.annotation.Keep
+
+@Keep
 data class GeofenceData(val id: String,
                         val lat: Double,
                         val lng: Double,
