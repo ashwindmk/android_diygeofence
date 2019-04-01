@@ -11,3 +11,4 @@
 .externalNativeBuild
 .idea/vcs.xml
 diy-geofence/local.properties
+.idea/

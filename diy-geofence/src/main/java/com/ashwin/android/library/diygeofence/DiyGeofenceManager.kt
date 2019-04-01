@@ -11,12 +11,14 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Handler
+import android.support.annotation.Keep
 import android.util.Log
 import com.google.android.gms.common.ConnectionResult
 import java.lang.Exception
 import com.google.android.gms.common.GooglePlayServicesUtil
 import java.util.*
 
+@Keep
 object DiyGeofenceManager {
     const val DEBUG_TAG = "diy-geofence"
 
