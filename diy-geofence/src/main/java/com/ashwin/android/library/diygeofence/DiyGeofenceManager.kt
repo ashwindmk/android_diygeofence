@@ -11,6 +11,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Handler
+import android.os.HandlerThread
 import android.support.annotation.Keep
 import android.util.Log
 import com.google.android.gms.common.ConnectionResult
@@ -67,16 +68,14 @@ object DiyGeofenceManager {
         return ConnectionResult.SUCCESS == status
     }
 
-    private fun isFusedLocationDependencyAdded(): Boolean {
-        return try {
-            Class.forName("com.google.android.gms.location.LocationServices")
-            true
-        } catch (e: Exception) {
-            if (appDebugBuild) {
-                Log.e(DEBUG_TAG, "Location dependency not found", e)
-            }
-            false
+    private val FUSED_LOCATION_AVAILABLE: Boolean = try {
+        Class.forName("com.google.android.gms.location.LocationServices")
+        true
+    } catch (e: Exception) {
+        if (appDebugBuild) {
+            Log.e(DEBUG_TAG, "Location dependency not found", e)
         }
+        false
     }
 
     private fun getDb(context: Context): DatabaseHandler {
@@ -94,13 +93,16 @@ object DiyGeofenceManager {
             .apply()
 
         // Fetch location and process geofences
-        locationHandler = Handler()
+        val handlerThread = HandlerThread("worker-init-location-check")
+        handlerThread.start()
+        locationHandler = Handler(handlerThread.looper)
         locationHandler?.postDelayed({
             if (appDebugBuild) {
                 val geofences = getDb(context).getGeofences()
                 Log.w(DEBUG_TAG, "total added geofences: ${geofences.size}")
             }
             updateLocation(context, true)
+            handlerThread.quit()
         }, 2500)
     }
 
@@ -156,7 +158,7 @@ object DiyGeofenceManager {
     private fun canUpdateLocation(context: Context): Boolean {
         var canUpdateLocation = true
 
-        if (!isFusedLocationDependencyAdded()) {
+        if (!FUSED_LOCATION_AVAILABLE) {
             if (appDebugBuild) {
                 Log.e(DEBUG_TAG, "Location dependency library not added")
             }
@@ -382,15 +384,18 @@ object DiyGeofenceManager {
 
     private fun dispatchEnterCallback(context: Context, id: String) {
         if (appDebugBuild) {
-            Log.w(DEBUG_TAG, "Entered geofence: $id")
+            val threadName = Thread.currentThread().name
+            Log.w(DEBUG_TAG, "Entered geofence: $id ($threadName)")
         }
         listener?.onEnter(context, id)
     }
 
     private fun dispatchExitCallback(context: Context, id: String) {
         if (appDebugBuild) {
-            Log.w(DEBUG_TAG, "Exited geofence: $id")
+            val threadName = Thread.currentThread().name
+            Log.w(DEBUG_TAG, "Exited geofence: $id ($threadName)")
         }
+
         listener?.onExit(context, id)
     }
 

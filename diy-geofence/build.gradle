@@ -50,8 +50,10 @@ properties.load(project.file('local.properties').newDataInputStream())
 
 def groupid = "com.ashwin.android"
 def artifactid = "diy-geofence"
-version = "0.0.9"
+version = "0.0.12"
 group = groupid
+def gitUrl = "https://github.com/ashwindmk/android_diygeofence.git"
+def siteUrl = "https://github.com/ashwindmk/android_diygeofence_demo"
 
 task androidSourcesJar(type: Jar) {
     classifier = 'sources'
@@ -94,6 +96,17 @@ install {
                         email 'ashwin.dinesh01@gmail.com'
                     }
                 }
+                licenses {
+                    license {
+                        name "The Apache License, Version 2.0"
+                        url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
             }
         }
     }
@@ -106,7 +119,8 @@ bintray {
     pkg {
         repo = 'maven'
         name = artifactid
-        vcsUrl = 'https://github.com/ashwindmk/android_diygeofence.git'
+        vcsUrl = gitUrl
+        websiteUrl = siteUrl
         licenses = ['Apache-2.0']
         publish = true
         version {
